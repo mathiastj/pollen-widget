@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Pollen Widget</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="pollen_widget_grass">Grass:</string>
+    <string name="pollen_widget_grass_amount">-</string>
+    <string name="pollen_widget_artemisia">Artemisia :</string>
+    <string name="pollen_widget_artemisia_amount">-</string>
     <string name="add_widget">Add widget</string>
 </resources>

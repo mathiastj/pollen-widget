@@ -11,7 +11,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.*
 
-
 class PollenWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
@@ -20,7 +19,6 @@ class PollenWidgetProvider : AppWidgetProvider() {
     ) {
         val remoteViews = RemoteViews(context.packageName, R.layout.pollen_widget)
 
-
         val intent = Intent(context, PollenWidgetProvider::class.java)
         intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
@@ -28,17 +26,21 @@ class PollenWidgetProvider : AppWidgetProvider() {
             context,
             0, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
-        remoteViews.setOnClickPendingIntent(R.id.actionButton, pendingIntent)
+        remoteViews.setOnClickPendingIntent(R.id.pollen_container, pendingIntent)
 
         val hallo = GlobalScope.async {
-            val res = getPollenData()
-            Log.i("MyActivity",res)
-            var grassPollen = findSpecificPollen("Græs", res)
+            val pollenData = getPollenData()
+            Log.i("MyActivity",pollenData)
+            var grassPollen = findSpecificPollen("Græs", pollenData)
             if (grassPollen === null) {
                 grassPollen = "-"
             }
-            findSpecificPollen("Bynke", res)
-            remoteViews.setTextViewText(R.id.appwidget_text, grassPollen)
+            var artemisiaPollen = findSpecificPollen("Bynke", pollenData)
+            if (artemisiaPollen === null) {
+                artemisiaPollen = "-"
+            }
+            remoteViews.setTextViewText(R.id.pollen_widget_grass_amount, grassPollen)
+            remoteViews.setTextViewText(R.id.pollen_widget_artemisia_amount, artemisiaPollen)
             appWidgetIds.forEach { appWidgetId ->
                 appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
             }
@@ -54,6 +56,7 @@ class PollenWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    // Too lazy to unpack the XML, uses regex to find the first occurrence (which is Copenhagen) of the specific pollen and looks at the subsequent value
     private fun findSpecificPollen(typeOfPollen: String, data: String): String? {
         val pattern = "<name>$typeOfPollen<\\/name>\\s*<value>([-,\\d])<\\/value>".toRegex()
         val match = pattern.find(data)

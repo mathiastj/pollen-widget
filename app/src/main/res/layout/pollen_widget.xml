@@ -3,27 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
-    android:background="#55000000">
+    android:background="#55000000"
+    android:id="@+id/pollen_container">
 
     <TextView
-        android:id="@+id/appwidget_text"
+        android:id="@+id/pollen_widget_grass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:layout_margin="8dp"
-        android:background="#09C"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
+        android:contentDescription="@string/pollen_widget_grass"
+        android:text="@string/pollen_widget_grass"
         android:textColor="#ffffff"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
-
-    <Button
-        android:id="@+id/actionButton"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="Refresh"/>
-
+    <TextView
+        android:id="@+id/pollen_widget_grass_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/pollen_widget_grass_amount"
+        android:text="@string/pollen_widget_grass_amount"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/pollen_widget_artemisia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/pollen_widget_artemisia"
+        android:text="@string/pollen_widget_artemisia"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/pollen_widget_artemisia_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/pollen_widget_artemisia_amount"
+        android:text="@string/pollen_widget_artemisia_amount"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
 </LinearLayout>
