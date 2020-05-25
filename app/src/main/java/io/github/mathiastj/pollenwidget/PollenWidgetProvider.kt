@@ -29,11 +29,14 @@ class PollenWidgetProvider : AppWidgetProvider() {
         )
         remoteViews.setOnClickPendingIntent(R.id.pollen_container, pendingIntent)
 
-        val scope = CoroutineScope(context = Dispatchers.IO)
+        val scope = CoroutineScope(context = Dispatchers.Main)
 
         scope.launch {
-            val pollenData =  getPollenData()
-            Log.i("PollenWidget",pollenData)
+            val pollenData = withContext(Dispatchers.IO) {
+                getPollenData()
+            }
+
+            Log.i("PollenWidget", pollenData)
             var grassPollen = findSpecificPollen("Græs", pollenData)
             if (grassPollen === null) {
                 grassPollen = "-"
@@ -49,6 +52,7 @@ class PollenWidgetProvider : AppWidgetProvider() {
             }
         }
     }
+
 
     private fun getPollenData(): String {
         return URL("https://www.dmi.dk/dmidk_byvejrWS/rest/texts/forecast/pollen/Danmark").run {
