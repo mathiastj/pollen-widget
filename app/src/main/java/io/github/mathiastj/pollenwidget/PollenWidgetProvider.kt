@@ -10,6 +10,7 @@ import android.widget.RemoteViews
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class PollenWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
@@ -28,7 +29,9 @@ class PollenWidgetProvider : AppWidgetProvider() {
         )
         remoteViews.setOnClickPendingIntent(R.id.pollen_container, pendingIntent)
 
-        GlobalScope.launch {
+        val scope = CoroutineScope(context = Dispatchers.IO)
+
+        scope.launch {
             val pollenData =  getPollenData()
             Log.i("PollenWidget",pollenData)
             var grassPollen = findSpecificPollen("Græs", pollenData)
@@ -60,7 +63,7 @@ class PollenWidgetProvider : AppWidgetProvider() {
     private fun findSpecificPollen(typeOfPollen: String, data: String): String? {
         val pattern = "<name>$typeOfPollen<\\/name>\\s*<value>([-,\\d])<\\/value>".toRegex()
         val match = pattern.find(data)
-        Log.i("MyActivity", match?.groupValues?.get(1))
+        Log.i("PollenWidget", match?.groupValues?.get(1))
         return match?.groupValues?.get(1)
     }
 }
