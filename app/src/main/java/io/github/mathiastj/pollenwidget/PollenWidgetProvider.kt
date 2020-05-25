@@ -28,9 +28,9 @@ class PollenWidgetProvider : AppWidgetProvider() {
         )
         remoteViews.setOnClickPendingIntent(R.id.pollen_container, pendingIntent)
 
-        val hallo = GlobalScope.async {
-            val pollenData = getPollenData()
-            Log.i("MyActivity",pollenData)
+        GlobalScope.launch {
+            val pollenData =  getPollenData()
+            Log.i("PollenWidget",pollenData)
             var grassPollen = findSpecificPollen("Græs", pollenData)
             if (grassPollen === null) {
                 grassPollen = "-"
@@ -47,7 +47,7 @@ class PollenWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private suspend fun getPollenData(): String {
+    private fun getPollenData(): String {
         return URL("https://www.dmi.dk/dmidk_byvejrWS/rest/texts/forecast/pollen/Danmark").run {
             openConnection().run {
                 this as HttpURLConnection
@@ -61,10 +61,6 @@ class PollenWidgetProvider : AppWidgetProvider() {
         val pattern = "<name>$typeOfPollen<\\/name>\\s*<value>([-,\\d])<\\/value>".toRegex()
         val match = pattern.find(data)
         Log.i("MyActivity", match?.groupValues?.get(1))
-
-
         return match?.groupValues?.get(1)
     }
-
-
 }

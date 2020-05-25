@@ -2,9 +2,9 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialKeyguardLayout="@layout/pollen_widget"
     android:initialLayout="@layout/pollen_widget"
-    android:minWidth="80dp"
+    android:minWidth="250dp"
     android:minHeight="40dp"
-    android:previewImage="@drawable/example_appwidget_preview"
+    android:previewImage="@drawable/pollen_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="7200000"
     android:widgetCategory="home_screen">
