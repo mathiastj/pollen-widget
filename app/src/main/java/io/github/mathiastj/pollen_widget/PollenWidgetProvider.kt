@@ -73,6 +73,6 @@ class PollenWidgetProvider : AppWidgetProvider() {
             Log.i("PollenWidget", "Regex failed" + data)
         }
 
-        return match?.groupValues?.get(1)
+        return pollenValue
     }
 }
