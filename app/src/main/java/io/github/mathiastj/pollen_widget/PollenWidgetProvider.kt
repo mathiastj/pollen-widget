@@ -1,4 +1,4 @@
-package io.github.mathiastj.pollenwidget
+package io.github.mathiastj.pollen_widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -10,7 +10,6 @@ import android.widget.RemoteViews
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 class PollenWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
@@ -65,9 +64,15 @@ class PollenWidgetProvider : AppWidgetProvider() {
 
     // Too lazy to unpack the XML, uses regex to find the first occurrence (which is Copenhagen) of the specific pollen and looks at the subsequent value
     private fun findSpecificPollen(typeOfPollen: String, data: String): String? {
-        val pattern = "<name>$typeOfPollen<\\/name>\\s*<value>([-,\\d])<\\/value>".toRegex()
+        val pattern = "<name>$typeOfPollen<\\/name>\\s*<value>([-,\\d]+)<\\/value>".toRegex()
         val match = pattern.find(data)
-        Log.i("PollenWidget", match?.groupValues?.get(1))
+        val pollenValue = match?.groupValues?.get(1)
+        if (pollenValue !== null) {
+            Log.i("PollenWidget", pollenValue)
+        } else {
+            Log.i("PollenWidget", "Regex failed" + data)
+        }
+
         return match?.groupValues?.get(1)
     }
 }

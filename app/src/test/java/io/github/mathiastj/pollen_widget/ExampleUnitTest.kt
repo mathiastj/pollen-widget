@@ -1,4 +1,4 @@
-package io.github.mathiastj.pollenwidget
+package io.github.mathiastj.pollen_widget
 
 import org.junit.Test
 
