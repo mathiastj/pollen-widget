@@ -10,6 +10,9 @@ import android.widget.RemoteViews
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.*
+import java.lang.Exception
+import java.time.LocalDate
+import java.util.*
 
 class PollenWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
@@ -31,19 +34,32 @@ class PollenWidgetProvider : AppWidgetProvider() {
         val scope = CoroutineScope(context = Dispatchers.Main)
 
         scope.launch {
-            val pollenData = withContext(Dispatchers.IO) {
-                getPollenData()
+            val pollenData = try {
+                withContext(Dispatchers.IO) {
+                    getPollenData()
+                }
+            } catch (err: Exception) {
+                // Set data to null if request fails
+                null
             }
 
-            Log.i("PollenWidget", pollenData)
-            var grassPollen = findSpecificPollen("Græs", pollenData)
-            if (grassPollen === null) {
-                grassPollen = "-"
+            var grassPollen = "-"
+            var artemisiaPollen = "-"
+            if (pollenData !== null) {
+                Log.i("PollenWidget pollen data:", pollenData)
+                val pollenDate = findPollenDataDate((pollenData))
+                val now = LocalDate.now()
+                // Allow data to be max 2 days old
+                if (pollenDate < now.minusDays(2)) {
+                    Log.i("PollenWidget:", "Pollen data is outdated")
+                } else {
+                    grassPollen = findSpecificPollen("Græs", pollenData)
+                    artemisiaPollen = findSpecificPollen("Bynke", pollenData)
+                }
+            } else {
+                Log.i("PollenWidget:", "Found no pollen data")
             }
-            var artemisiaPollen = findSpecificPollen("Bynke", pollenData)
-            if (artemisiaPollen === null) {
-                artemisiaPollen = "-"
-            }
+
             remoteViews.setTextViewText(R.id.pollen_widget_grass_amount, grassPollen)
             remoteViews.setTextViewText(R.id.pollen_widget_artemisia_amount, artemisiaPollen)
             appWidgetIds.forEach { appWidgetId ->
@@ -62,17 +78,36 @@ class PollenWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    // Too lazy to unpack the XML, uses regex to find the first occurrence (which is Copenhagen) of the specific pollen and looks at the subsequent value
-    private fun findSpecificPollen(typeOfPollen: String, data: String): String? {
+    // Get the date from when the pollen data was issued
+    private fun findPollenDataDate(data: String): LocalDate {
+        val datePattern = "<day>(\\d+)<\\/day>\\s*<month>(\\d+)<\\/month>\\s*<year>(\\d+)<\\/year>\\s*".toRegex()
+        val match = datePattern.find(data)
+        val day = match?.groupValues?.get(1)
+        var month = match?.groupValues?.get(2)
+        val year = match?.groupValues?.get(3)
+        if (day !== null && month !== null && year !== null) {
+            // The month seems to be a single digit, i.e. August is just 8, format it to 08
+            if (month.length == 1){
+                month = "0$month"
+            }
+            Log.i("Pollenwidget date", "$year $month $day")
+            return LocalDate.parse("$year-$month-$day")
+        }
+        // If we can't find a date, assume that it is now
+        return LocalDate.now()
+    }
+
+    // Instead of figuring out Kotlin XML parsing; uses regex to find the first occurrence (which is Copenhagen) of the specific pollen and looks at the subsequent value
+    private fun findSpecificPollen(typeOfPollen: String, data: String): String {
         val pattern = "<name>$typeOfPollen<\\/name>\\s*<value>([-,\\d]+)<\\/value>".toRegex()
         val match = pattern.find(data)
         val pollenValue = match?.groupValues?.get(1)
         if (pollenValue !== null) {
-            Log.i("PollenWidget", pollenValue)
+            Log.i("PollenWidget pollen value:", pollenValue)
         } else {
             Log.i("PollenWidget", "Regex failed" + data)
         }
 
-        return pollenValue
+        return "-"
     }
 }
