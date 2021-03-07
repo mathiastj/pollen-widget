@@ -82,13 +82,17 @@ class PollenWidgetProvider : AppWidgetProvider() {
     private fun findPollenDataDate(data: String): LocalDate {
         val datePattern = "<day>(\\d+)<\\/day>\\s*<month>(\\d+)<\\/month>\\s*<year>(\\d+)<\\/year>\\s*".toRegex()
         val match = datePattern.find(data)
-        val day = match?.groupValues?.get(1)
+        var day = match?.groupValues?.get(1)
         var month = match?.groupValues?.get(2)
         val year = match?.groupValues?.get(3)
         if (day !== null && month !== null && year !== null) {
             // The month seems to be a single digit, i.e. August is just 8, format it to 08
             if (month.length == 1){
                 month = "0$month"
+            }
+            // Day is also a single digit now, format it like the month above
+            if (day.length == 1) {
+                day = "0$day"
             }
             Log.i("Pollenwidget date", "$year $month $day")
             return LocalDate.parse("$year-$month-$day")
