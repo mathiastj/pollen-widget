@@ -12,7 +12,6 @@ import java.net.URL
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.time.LocalDate
-import java.util.*
 
 class PollenWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
@@ -107,11 +106,10 @@ class PollenWidgetProvider : AppWidgetProvider() {
         val match = pattern.find(data)
         val pollenValue = match?.groupValues?.get(1)
         if (pollenValue !== null) {
-            Log.i("PollenWidget pollen value:", pollenValue)
-        } else {
-            Log.i("PollenWidget", "Regex failed" + data)
+            Log.i("PollenWidget pollen value and type:", "$pollenValue $typeOfPollen")
+            return pollenValue
         }
-
+        Log.i("PollenWidget", "Regex failed" + data)
         return "-"
     }
 }
